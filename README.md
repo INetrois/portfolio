@@ -29,22 +29,6 @@
 - Responsive layout with mobile-optimized controls
 - Self-hosted deployment ready
 
-## 💻 Installation & Usage
-
-```bash
-# Clone the repository
-git clone git@github.com:INetrois/portfolio.git
-cd portfolio
-
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to view the portfolio.
-
 ## 🚀 Tech Stack
 
 - **Framework:** Next.js 16 (App Router, Turbopack)
