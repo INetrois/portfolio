@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Netrois Portfolio | Backend Developer / Engineer",
   description:
     "Netrois portfolio focused on self-hosted systems, backend architecture and infrastructure.",
+  icons: {
+    icon: "/avatar.png",
+    apple: "/avatar.png",
+  },
 };
 
 export default function RootLayout({
