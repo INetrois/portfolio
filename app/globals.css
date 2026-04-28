@@ -1,26 +1,501 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/* ─── Design tokens ─────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0d10;
+  --foreground: #f3f4f6;
+  --card: #111418;
+  --card-foreground: #f3f4f6;
+  --primary: #e5e7eb;
+  --primary-foreground: #0b0d10;
+  --secondary: #171b21;
+  --secondary-foreground: #f3f4f6;
+  --muted: #12161c;
+  --muted-foreground: #9ca3af;
+  --accent: #1c222b;
+  --accent-foreground: #f3f4f6;
+  --border: #242a33;
+  --input: #242a33;
+  --ring: #6b7280;
+
+  /* glow palette */
+  --glow-a: rgba(148, 163, 184, 0.13);
+  --glow-b: rgba(75, 85, 99, 0.18);
+  --glow-c: rgba(100, 120, 160, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ───────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
+  min-height: 100%;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* prevent the fixed surface-glow from creating a scrollbar */
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(148, 163, 184, 0.25);
+  color: var(--foreground);
+}
+
+/* ─── Fixed ambient glow (no clipping) ──────────────────────────────────── */
+/*
+  The glow is now position:fixed so it covers the entire viewport always,
+  no matter how much the user scrolls. The containing <main> no longer
+  needs to be positioned relative for this element.
+*/
+.surface-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 100% 60% at 15% -20%, rgba(148, 163, 184, 0.18), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 90% 10%,  rgba(75, 85, 99,  0.26), transparent 50%),
+    radial-gradient(ellipse 60% 70% at 50% 110%, rgba(100, 120, 160, 0.12), transparent 50%);
+  animation: glow-breathe 10s ease-in-out infinite alternate,
+             glow-drift 18s ease-in-out infinite;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+/* secondary subtle layer for depth */
+.surface-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 30% 80%, rgba(148, 163, 184, 0.06), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 70% 60%, rgba(75, 85, 99,  0.08), transparent 60%);
+  animation: glow-breathe 14s ease-in-out infinite alternate-reverse;
+  opacity: 0.7;
+}
+
+@keyframes glow-breathe {
+  0%   { opacity: 0.85; transform: scale(1); }
+  50%  { opacity: 1;    transform: scale(1.02); }
+  100% { opacity: 0.75; transform: scale(0.98); }
+}
+
+@keyframes glow-drift {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 50% 110%; }
+  50%      { background-position: 10% 5%, 90% 15%, 60% 120%; }
+}
+
+/* ─── Noise texture overlay ────────────────────────────────────────────────── */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  animation: noise-shift 0.5s steps(5) infinite;
+}
+
+@keyframes noise-shift {
+  0% { background-position: 0 0; }
+  25% { background-position: -10px 10px; }
+  50% { background-position: 10px -10px; }
+  75% { background-position: -10px -10px; }
+  100% { background-position: 0 0; }
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .main-panel {
+    max-height: calc(100svh - 3rem);
+    overflow-y: auto;
+    scrollbar-color: #2d3748 transparent;
+    scrollbar-width: thin;
+  }
+
+  .main-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .main-panel::-webkit-scrollbar-thumb {
+    background: #2d3748;
+    border-radius: 999px;
+  }
+
+  .main-panel::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ─── Profile card — floating avatar ────────────────────────────────────── */
+.avatar-float {
+  animation: avatar-float 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes avatar-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ─── Staggered entrance animations — premium feel ───────────────────────── */
+.reveal {
+  animation: rise-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+.reveal-1  { animation-delay: 0.04s; }
+.reveal-2  { animation-delay: 0.10s; }
+.reveal-3  { animation-delay: 0.16s; }
+.reveal-4  { animation-delay: 0.22s; }
+.reveal-5  { animation-delay: 0.28s; }
+.reveal-6  { animation-delay: 0.34s; }
+.reveal-7  { animation-delay: 0.40s; }
+.reveal-8  { animation-delay: 0.46s; }
+
+/* Legacy delay helpers kept for compat */
+.animate-rise     { animation: rise-in 0.95s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-delay-1  { animation-delay: 0.08s; }
+.animate-delay-2  { animation-delay: 0.16s; }
+.animate-delay-3  { animation-delay: 0.24s; }
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95) rotateX(2deg);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+    filter: blur(0);
+  }
+}
+
+/* ─── Tab panel transition — smoother cross-fade ───────────────────────────── */
+.tab-panel {
+  animation: tab-in 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tab-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Tab indicator slide — springier ─────────────────────────────────────── */
+.tab-active-indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: var(--accent);
+  z-index: 0;
+  animation: indicator-pop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.06) inset;
+}
+
+@keyframes indicator-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ─── Card interactions — Senior-level polish ─────────────────────────────── */
+.soft-card,
+.project-tile {
+  transition:
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 280ms ease,
+    box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 280ms ease;
+  position: relative;
+  will-change: transform, box-shadow;
+  /* overflow removed to allow unclipped shadows */
+}
+
+/* Hover state — multi-layer shadow + lift */
+.soft-card:hover,
+.project-tile:hover {
+  transform: translateY(-6px) scale(1.006);
+  border-color: #374151;
+  background-color: #141922;
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.10),
+    0 8px 24px rgba(0, 0, 0, 0.35),
+    0 20px 48px rgba(0, 0, 0, 0.25),
+    0 0 80px -12px rgba(148, 163, 184, 0.12);
+}
+
+/* Active/press state — micro feedback */
+.soft-card:active,
+.project-tile:active {
+  transform: translateY(-2px) scale(1.002);
+  transition-duration: 120ms;
+}
+
+@media (max-width: 640px) {
+  .soft-card:hover,
+  .project-tile:hover {
+    transform: none;
+    box-shadow:
+      0 0 0 1px rgba(148, 163, 184, 0.10),
+      0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* ─── Soft-hover (buttons & links) — enhanced ─────────────────────────────── */
+.soft-hover {
+  transition:
+    transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms ease,
+    border-color 200ms ease;
+  position: relative;
+  will-change: transform, box-shadow;
+}
+
+.soft-hover:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.28),
+    0 0 40px -8px rgba(148, 163, 184, 0.10);
+}
+
+.soft-hover:active {
+  transform: translateY(0px) scale(0.97);
+  box-shadow:
+    0 0 0 1px rgba(148, 163, 184, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+  transition-duration: 100ms;
+}
+
+/* Focus ring — slightly more prominent */
+.soft-hover:focus-visible {
+  outline: 2px solid rgba(148, 163, 184, 0.55);
+  outline-offset: 3px;
+}
+
+/* ─── Tab button micro-interaction ────────────────────────────────────────── */
+.tab-btn {
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted-foreground);
+  transition:
+    color 200ms ease,
+    transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tab-btn:hover {
+  color: var(--foreground);
+}
+
+.tab-btn:active {
+  transform: scale(0.96);
+}
+
+.tab-btn[aria-current="page"] {
+  color: var(--foreground);
+}
+
+/* ─── Profile card — elevated gradient border + hover glow ───────────────── */
+.profile-card {
+  position: relative;
+  isolation: isolate;
+  transition: box-shadow 280ms ease;
+}
+
+.profile-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.22) 0%,
+    transparent 40%,
+    rgba(75, 85, 99, 0.18) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+  opacity: 0.9;
+}
+
+.profile-card:hover::after {
+  opacity: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(148, 163, 184, 0.28) 0%,
+    transparent 35%,
+    rgba(75, 85, 99, 0.22) 100%
+  );
+}
+
+/* Avatar ring glow on hover */
+.profile-card:hover .avatar-float {
+  filter: drop-shadow(0 0 12px rgba(148, 163, 184, 0.25));
+}
+
+/* ─── Stack icon glow on hover ───────────────────────────────────────────── */
+.stack-icon-wrap {
+  transition:
+    box-shadow 260ms ease,
+    transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.stack-icon-wrap:hover {
+  box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.18), 0 8px 18px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1) rotate(-3deg);
+}
+
+/* ─── Pulsing online dot ─────────────────────────────────────────────────── */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  animation: pulse-ring 2.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(34, 197, 94, 0.45); }
+  60%  { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(34, 197, 94, 0); }
+}
+
+/* ─── Section title underline draw — with glow ─────────────────────────────── */
+.section-title {
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg,
+    rgba(148, 163, 184, 0.75) 0%,
+    rgba(148, 163, 184, 0.3) 60%,
+    transparent 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(148, 163, 184, 0.25);
+  animation: underline-draw 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+}
+
+@keyframes underline-draw {
+  to { width: 100%; }
+}
+
+/* ─── Badge hover polish ──────────────────────────────────────────────────── */
+.badge-glow {
+  position: relative;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.badge-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.badge-glow:hover::after {
+  opacity: 1;
+}
+
+.badge-glow:hover {
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.12), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+:focus-visible {
+  outline: 2px solid rgba(148, 163, 184, 0.5);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

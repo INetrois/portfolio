@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="https://img.shields.io/badge/-Next.js-blue?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js"/>
+  <img src="https://img.shields.io/badge/-TypeScript-black?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+</p>
 
-## Getting Started
+---
 
-First, run the development server:
+<p align="center">
+  🛠️ Personal portfolio of a Backend Developer / Engineer focused on self-hosted systems, backend architecture, and infrastructure.
+</p>
+
+<p align="center">
+  <a href="https://github.com/INetrois/portfolio">
+    <img src="https://img.shields.io/github/last-commit/INetrois/portfolio?style=flat-square" alt="Last Commit">
+  </a>
+  <a href="https://github.com/INetrois/portfolio/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/INetrois/portfolio?style=flat-square" alt="License">
+  </a>
+  <a href="https://github.com/INetrois/portfolio/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/INetrois/portfolio/ci.yml?style=flat-square" alt="CI">
+  </a>
+</p>
+
+## 🔹 Features
+
+- Minimalist dark theme with ambient glow and noise texture
+- Tab-based navigation (About, Tech Stack, Projects)
+- Staggered entrance animations and micro-interactions
+- Responsive layout with mobile-optimized controls
+- Self-hosted deployment ready
+
+## 💻 Installation & Usage
 
 ```bash
+# Clone the repository
+git clone git@github.com:INetrois/portfolio.git
+cd portfolio
+
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the portfolio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS + Custom CSS variables
+- **UI:** Custom accessible components
 
-## Learn More
+## 📁 Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+portfolio/
+├── app/
+│   ├── globals.css      # Global styles, animations, tokens
+│   ├── layout.tsx       # Root layout
+│   ├── page.tsx         # Main page component
+│   └── ...
+├── components/
+│   └── ui/              # Reusable UI primitives
+├── lib/
+│   └── utils.ts         # Utility functions (cn)
+└── public/              # Static assets
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Design Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Deep dark palette (#0b0d10) with slate accents
+- Multi-layer ambient glow and subtle film grain overlay
+- Smooth cubic-bezier transitions and prefers-reduced-motion support
+- No external image dependencies (SVG icons + GitHub avatar)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<p align="center">
+  Made with focus on clean engineering by <a href="https://github.com/INetrois">INetrois</a>
+</p>
